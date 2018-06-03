@@ -2,9 +2,12 @@ package cz.etn.etnshop.controller;
 
 import java.util.List;
 import java.util.OptionalInt;
+import java.util.Set;
 import java.util.function.IntSupplier;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.ConstraintViolation;
+import javax.validation.Validator;
 
 import org.hibernate.HibernateException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,7 +29,10 @@ public class ProductController {
 
 	private static final String LOG_TAG = "--------------------- ProductController: ";
 	// https://www.tutorialspoint.com/hibernate/hibernate_examples.htm
-	// https://drive.google.com/file/d/1mzrG0fUHil8YrR_dslEc2hkEI-bNOUMO/view?usp=sharing
+	// http://www.beanvalidation.org/
+	// http://www.hibernate.org/validator
+	
+	private static Validator validator;
 
 	@Autowired
 	private ProductService productService;
@@ -40,6 +46,8 @@ public class ProductController {
 
 	@RequestMapping("/add_product")
 	public ModelAndView add(HttpServletRequest request) {
+		// http://www.beanvalidation.org
+		// http://www.hibernate.org/validator
 		RequestParseResult rpr = null;
 		try {
 			rpr = RequestParser.parseRequest(request);
@@ -53,6 +61,14 @@ public class ProductController {
 		}
 
 		Product p = new Product(rpr.getName(), rpr.getSerial1(), rpr.getSerial2());
+		
+		//TODO get rid of JS validation
+		Set<ConstraintViolation<Product>> constraintViolations = validator.validate(p);
+		if(constraintViolations.size() != 0) {
+			System.err.println("validation error: /add_product");
+			return getProductListModelAndView();
+		}
+		
 		try {
 			productDao.addProduct(p);
 		} catch (HibernateException he) {
@@ -64,6 +80,8 @@ public class ProductController {
 
 	@RequestMapping("/edit_product")
 	public ModelAndView edit(HttpServletRequest request) {
+		// http://www.beanvalidation.org
+		// http://www.hibernate.org/validator
 		RequestParseResult rpr = null;
 		try {
 			rpr = RequestParser.parseRequest(request);
@@ -84,6 +102,12 @@ public class ProductController {
 			he.printStackTrace();
 		}
 		if (p != null) {
+			//TODO get rid of JS validation
+			Set<ConstraintViolation<Product>> constraintViolations = validator.validate(p);
+			if(constraintViolations.size() != 0) {
+				System.err.println("validation error: /edit_product");
+				return getProductListModelAndView();
+			}
 			try {
 				productDao.updateProduct(p, rpr);
 			} catch (HibernateException he) {
