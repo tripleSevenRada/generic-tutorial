@@ -5,7 +5,6 @@
 <head>
 <title>etnShop</title>
 <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
-<link rel="stylesheet" href="resources/core/css/custom.css">
 </head>
 <body>
 
