@@ -9,6 +9,11 @@ import org.springframework.stereotype.Repository;
 
 import cz.etn.etnshop.controller.utils.RequestParseResult;
 
+//https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/stereotype/Repository.html
+//One advantage of using this annotation is that it has
+//automatic persistence exception translation enabled. When using a persistence framework
+//such as Hibernate, native exceptions thrown within classes annotated with
+//@Repository will be automatically translated into subclasses of Spring’s DataAccessExeption.
 @Repository("productDao")
 public class ProductDaoImpl extends AbstractDao implements ProductDao {
 

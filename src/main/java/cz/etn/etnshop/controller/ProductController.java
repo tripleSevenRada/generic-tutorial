@@ -24,6 +24,7 @@ import cz.etn.etnshop.controller.utils.RequestParser;
 import cz.etn.etnshop.dao.Product;
 import cz.etn.etnshop.dao.ProductDao;
 import cz.etn.etnshop.service.ProductService;
+import cz.etn.etnshop.validators.ProductValidator;
 
 @Controller
 @RequestMapping("/product")
@@ -34,16 +35,12 @@ public class ProductController {
 	// http://www.beanvalidation.org/
 	// http://www.hibernate.org/validator
 	
-	private static Validator validator;
-	static {
-		ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
-		validator = factory.getValidator();
-	}
-
 	@Autowired
 	private ProductService productService;
 	@Autowired
 	private ProductDao productDao;
+	@Autowired
+	private ProductValidator productValidator;
 
 	@RequestMapping("/list")
 	public ModelAndView list() {
@@ -69,8 +66,7 @@ public class ProductController {
 		Product p = new Product(rpr.getName(), rpr.getSerial1(), rpr.getSerial2());
 		
 		//TODO get rid of JS validation
-		Set<ConstraintViolation<Product>> constraintViolations = validator.validate(p);
-		if(constraintViolations.size() != 0) {
+		if( ! productValidator.isValid(p)) {
 			System.err.println(LOG_TAG + "validation error: /add_product");
 			System.err.println(LOG_TAG + p.toString());
 			return getProductListModelAndView();
@@ -110,8 +106,7 @@ public class ProductController {
 		}
 		if (p != null) {
 			//TODO get rid of JS validation
-			Set<ConstraintViolation<Product>> constraintViolations = validator.validate(p);
-			if(constraintViolations.size() != 0) {
+			if(! productValidator.isValid(p)) {
 				System.err.println(LOG_TAG + "validation error: /edit_product");
 				System.err.println(LOG_TAG + p.toString());
 				return getProductListModelAndView();
