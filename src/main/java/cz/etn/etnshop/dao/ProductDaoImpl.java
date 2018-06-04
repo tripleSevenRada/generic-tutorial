@@ -9,6 +9,7 @@ import org.springframework.stereotype.Repository;
 
 import cz.etn.etnshop.controller.utils.RequestParseResult;
 
+//TODO prozkoumat tento mechanismus. Je nutne vsude zachytavat HibernateExceptions?
 //https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/stereotype/Repository.html
 //One advantage of using this annotation is that it has
 //automatic persistence exception translation enabled. When using a persistence framework

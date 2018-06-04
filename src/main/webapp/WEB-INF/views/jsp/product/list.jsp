@@ -1,4 +1,5 @@
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
+<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <!DOCTYPE html>
 <html lang="en">
@@ -42,12 +43,18 @@
 
 	<br>
 	<div class="w3-container">
-		<form action="add_product" method="GET">
-			<input style="width: 180px" type="text" name="name" placeholder="Name" required />
-			<input style="width: 160px" type="number" min="1" max="100000000" step="1" name="serial1" placeholder="Serial number 1" required />
-			<input style="width: 160px" type="number" min="1" max="100000000" step="1" name="serial2" placeholder="Serial number 2" required />
+	
+		<!-- validation using Spring validator pattern -->
+		
+		<form:form action="add_product" modelAttribute="intoFormProduct">
+			&nbsp;Name:&nbsp;<form:input style="width: 180px" path = "name"/>
+				 <form:errors path="name" cssClass="w3-red"/>
+			&nbsp;Serial number 1:&nbsp;<form:input style="width: 160px" path ="serial1"/>
+							<form:errors path="serial1" cssClass="w3-red"/>
+			&nbsp;Serial number 2:&nbsp;<form:input style="width: 160px" path="serial2"/>
+							<form:errors path="serial2" cssClass="w3-red"/>
 			<input	style="width: 180px" class="w3-btn w3-padding-small w3-green" type="submit" name="submitAdd" value="Add product" />
-		</form>
+		</form:form>
 	</div>
 	<br>
 	<div class="w3-container">

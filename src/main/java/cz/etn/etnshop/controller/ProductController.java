@@ -5,10 +5,13 @@ import java.util.OptionalInt;
 import java.util.function.IntSupplier;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
 
 import org.hibernate.HibernateException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -39,39 +42,27 @@ public class ProductController {
 
 	@RequestMapping("/list")
 	public ModelAndView list() {
-		return getProductListModelAndView();
+		return getProductListModelAndViewFresh();
 	}
 
+	//inconsistentni signatury metod, ja vim, ale ja si chci vyzkouset plno veci...
 	@RequestMapping("/add_product")
-	public ModelAndView add(HttpServletRequest request) {
-		RequestParseResult rpr = null;
-		try {
-			rpr = RequestParser.parseRequest(request);
-		} catch (Exception e) {
-			e.printStackTrace();
-			return getProductListModelAndView();
-		}
-		if (rpr.getName() == null || rpr.getSerial1() == -1 || rpr.getSerial2() == -1) {
-			System.err.println(LOG_TAG + "parse error1: " + rpr.toString());
-			return getProductListModelAndView();
-		}
-
-		Product p = new Product(rpr.getName(), rpr.getSerial1(), rpr.getSerial2());
-		
-		//TODO get rid of JS validation
-		if( ! productValidator.isValid(p)) {
-			System.err.println(LOG_TAG + "validation error: /add_product");
-			System.err.println(LOG_TAG + p.toString());
-			return getProductListModelAndView();
+	public ModelAndView add(
+			@Valid
+			@ModelAttribute ("intoFormProduct") Product outOfFormProduct,
+			BindingResult theBindingResult
+			) {
+		if(theBindingResult.hasErrors()) {
+			return getProductListModelAndViewStale();
 		}
 		
 		try {
-			productDao.addProduct(p);
+			productDao.addProduct(outOfFormProduct);
 		} catch (HibernateException he) {
 			// TODO
 			he.printStackTrace();
 		}
-		return getProductListModelAndView();
+		return getProductListModelAndViewFresh();
 	}
 
 	@RequestMapping("/edit_product")
@@ -81,11 +72,11 @@ public class ProductController {
 			rpr = RequestParser.parseRequest(request);
 		} catch (Exception e) {
 			e.printStackTrace();
-			return getProductListModelAndView();
+			return getProductListModelAndViewFresh();
 		}
 		if (rpr.getId() == null || rpr.getName() == null || rpr.getSerial1() == -1 || rpr.getSerial2() == -1) {
 			System.err.println(LOG_TAG + "parse error2: " + rpr.toString());
-			return getProductListModelAndView();
+			return getProductListModelAndViewFresh();
 		}
 
 		Product p = null;
@@ -100,7 +91,7 @@ public class ProductController {
 			if(! productValidator.isValid(p)) {
 				System.err.println(LOG_TAG + "validation error: /edit_product");
 				System.err.println(LOG_TAG + p.toString());
-				return getProductListModelAndView();
+				return getProductListModelAndViewFresh();
 			}
 			try {
 				productDao.updateProduct(p, rpr);
@@ -111,7 +102,7 @@ public class ProductController {
 		} else {
 			System.err.println(LOG_TAG + "/edit_product: query retrieved null");
 		}
-		return getProductListModelAndView();
+		return getProductListModelAndViewFresh();
 	}
 
 	/*
@@ -125,7 +116,7 @@ public class ProductController {
 			id = Integer.parseInt(idRequest);
 		} catch (Exception e) {
 			e.printStackTrace();
-			return getProductListModelAndView();
+			return getProductListModelAndViewFresh();
 		}
 		System.out.println(LOG_TAG + "remove, id: " + id);
 		try {
@@ -134,7 +125,7 @@ public class ProductController {
 			// TODO
 			he.printStackTrace();
 		}
-		return getProductListModelAndView();
+		return getProductListModelAndViewFresh();
 	}
 
 	@RequestMapping("/stats")
@@ -186,6 +177,16 @@ public class ProductController {
 			he.printStackTrace();
 		}
 		return modelAndViewProductList;
+	}
+	
+	private ModelAndView getProductListModelAndViewFresh() {
+		ModelAndView maw = getProductListModelAndView();
+		maw.addObject("intoFormProduct", new Product());
+		return maw;
+	}
+	private ModelAndView getProductListModelAndViewStale() {
+		ModelAndView maw = getProductListModelAndView();
+		return maw;
 	}
 
 }
