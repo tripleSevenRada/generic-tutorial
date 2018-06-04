@@ -12,6 +12,9 @@ import org.springframework.stereotype.Component;
 
 import cz.etn.etnshop.dao.Product;
 
+// http://www.beanvalidation.org
+// http://www.hibernate.org/validator
+
 @Component
 @Scope("singleton") //default anyway
 public class RudimentaryProductValidator implements ProductValidator {

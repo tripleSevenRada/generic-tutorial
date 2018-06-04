@@ -2,14 +2,9 @@ package cz.etn.etnshop.controller;
 
 import java.util.List;
 import java.util.OptionalInt;
-import java.util.Set;
 import java.util.function.IntSupplier;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.validation.ConstraintViolation;
-import javax.validation.Validation;
-import javax.validation.Validator;
-import javax.validation.ValidatorFactory;
 
 import org.hibernate.HibernateException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,8 +44,6 @@ public class ProductController {
 
 	@RequestMapping("/add_product")
 	public ModelAndView add(HttpServletRequest request) {
-		// http://www.beanvalidation.org
-		// http://www.hibernate.org/validator
 		RequestParseResult rpr = null;
 		try {
 			rpr = RequestParser.parseRequest(request);
@@ -83,8 +76,6 @@ public class ProductController {
 
 	@RequestMapping("/edit_product")
 	public ModelAndView edit(HttpServletRequest request) {
-		// http://www.beanvalidation.org
-		// http://www.hibernate.org/validator
 		RequestParseResult rpr = null;
 		try {
 			rpr = RequestParser.parseRequest(request);
