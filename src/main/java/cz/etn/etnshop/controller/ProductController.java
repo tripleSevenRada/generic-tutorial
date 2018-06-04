@@ -7,7 +7,9 @@ import java.util.function.IntSupplier;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.ConstraintViolation;
+import javax.validation.Validation;
 import javax.validation.Validator;
+import javax.validation.ValidatorFactory;
 
 import org.hibernate.HibernateException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,6 +35,10 @@ public class ProductController {
 	// http://www.hibernate.org/validator
 	
 	private static Validator validator;
+	static {
+		ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
+		validator = factory.getValidator();
+	}
 
 	@Autowired
 	private ProductService productService;
@@ -65,7 +71,8 @@ public class ProductController {
 		//TODO get rid of JS validation
 		Set<ConstraintViolation<Product>> constraintViolations = validator.validate(p);
 		if(constraintViolations.size() != 0) {
-			System.err.println("validation error: /add_product");
+			System.err.println(LOG_TAG + "validation error: /add_product");
+			System.err.println(LOG_TAG + p.toString());
 			return getProductListModelAndView();
 		}
 		
@@ -105,7 +112,8 @@ public class ProductController {
 			//TODO get rid of JS validation
 			Set<ConstraintViolation<Product>> constraintViolations = validator.validate(p);
 			if(constraintViolations.size() != 0) {
-				System.err.println("validation error: /edit_product");
+				System.err.println(LOG_TAG + "validation error: /edit_product");
+				System.err.println(LOG_TAG + p.toString());
 				return getProductListModelAndView();
 			}
 			try {
@@ -114,6 +122,8 @@ public class ProductController {
 				// TODO
 				he.printStackTrace();
 			}
+		} else {
+			System.err.println(LOG_TAG + "/edit_product: query retrieved null");
 		}
 		return getProductListModelAndView();
 	}

@@ -9,8 +9,9 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
 
 import java.util.function.IntSupplier;
 
@@ -31,13 +32,14 @@ public class Product implements Serializable, IntSupplier {
 
 	private static final long serialVersionUID = -2739622030641073946L;
 
-	@Size(min = 1)
 	private int id;
 	@NotNull
 	private String name;
-	@Size(min = 1, max = 1000000)
+    @Min(value = 1, message = "Serial 1 must not be less than 1")
+    @Max(value = 100, message = "Serial 1 Must not be greater than 100")
 	private int serial1;
-	@Size(min = 1, max = 1000000)
+    @Min(value = 1, message = "Serial 2 must not be less than 1")
+    @Max(value = 100, message = "Serial 2 Must not be greater than 100")
 	private int serial2;
 
 	@Id
@@ -92,4 +94,10 @@ public class Product implements Serializable, IntSupplier {
 	public int getAsInt() {
 		return name.length();
 	}
+	
+	@Override
+	public String toString() {
+		return this.name + " | " + this.id + " | " + this.serial1 + " | " + this.serial2;
+	}
+	
 }
