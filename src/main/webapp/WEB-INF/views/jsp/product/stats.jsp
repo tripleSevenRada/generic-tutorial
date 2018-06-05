@@ -13,9 +13,11 @@
 	</div>
 
 	<div class="w3-container">
-		Number: ${products_stats_size} <br> Max. name length:
-		${products_stats_name_max_length} <br> Min. name length:
-		${products_stats_name_min_length}
+		Number: ${products_stats_size}
+		<br>
+		Max. name length: ${products_stats_name_max_length}
+		<br>
+		Min. name length: ${products_stats_name_min_length}
 	</div>
 	<br>
 	<div class="w3-container">

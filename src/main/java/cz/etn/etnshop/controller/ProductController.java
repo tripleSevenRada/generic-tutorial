@@ -29,6 +29,7 @@ import cz.etn.etnshop.validators.ProductValidator;
 public class ProductController {
 
 	private static final String LOG_TAG = "--------------------- ProductController: ";
+	
 	// https://www.tutorialspoint.com/hibernate/hibernate_examples.htm
 	// http://www.beanvalidation.org/
 	// http://www.hibernate.org/validator
@@ -45,7 +46,7 @@ public class ProductController {
 		return getProductListModelAndViewFresh();
 	}
 
-	//inconsistentni signatury metod, ja vim, ale ja si chci vyzkouset plno veci...
+	//inconsistentni signatury metod, vim...
 	@RequestMapping("/add_product")
 	public ModelAndView add(
 			@Valid
@@ -106,7 +107,7 @@ public class ProductController {
 	}
 
 	/*
-	 * Tutorial practice, inconsistent with other methods signatures, I know
+	 * Tutorial practice, inconsistent with other methods signatures...
 	 */
 	@RequestMapping("/remove_product")
 	public ModelAndView remove(@RequestParam("idRemove") String idRequest) {
@@ -140,7 +141,6 @@ public class ProductController {
 		}
 		modelAndView.addObject("products_stats_size", products.size());
 
-		// crazy... practice purposes only
 		OptionalInt maxNameLength = products.stream().mapToInt(IntSupplier::getAsInt).max();
 		OptionalInt minNameLength = products.stream().mapToInt(IntSupplier::getAsInt).min();
 

@@ -30,8 +30,7 @@
 						<tr>
 							<td>${product.id}</td>
 							<td>${product.name}</td>
-							<spring:eval expression="product.getSerialISSN()"
-								var="calculatedISSN" />
+							<spring:eval expression="product.getSerialISSN()" var="calculatedISSN" />
 							<td>${calculatedISSN}</td>
 						</tr>
 					</c:forEach>
@@ -48,7 +47,7 @@
 		
 		<form:form action="add_product" modelAttribute="intoFormProduct">
 			&nbsp;Name:&nbsp;<form:input style="width: 180px" path = "name"/>
-				 <form:errors path="name" cssClass="w3-red"/>
+							<form:errors path="name" cssClass="w3-red"/>
 			&nbsp;Serial number 1:&nbsp;<form:input style="width: 160px" path ="serial1"/>
 							<form:errors path="serial1" cssClass="w3-red"/>
 			&nbsp;Serial number 2:&nbsp;<form:input style="width: 160px" path="serial2"/>

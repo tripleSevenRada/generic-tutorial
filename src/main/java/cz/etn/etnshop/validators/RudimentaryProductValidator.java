@@ -16,7 +16,7 @@ import cz.etn.etnshop.dao.Product;
 // http://www.hibernate.org/validator
 
 @Component
-@Scope("singleton") //default anyway
+@Scope("singleton") //default anyway...
 public class RudimentaryProductValidator implements ProductValidator {
 
 	private Validator validator;
