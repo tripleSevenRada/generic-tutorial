@@ -46,7 +46,8 @@ public class ProductController {
 		return getProductListModelAndViewFresh();
 	}
 
-	//inconsistentni signatury metod, vim...
+	//inkonsistentni signatury metod, vim, je to cviceni...
+	
 	@RequestMapping("/add_product")
 	public ModelAndView add(
 			@Valid
@@ -54,6 +55,7 @@ public class ProductController {
 			BindingResult theBindingResult
 			) {
 		if(theBindingResult.hasErrors()) {
+			//TODO jak tohle funguje... 
 			return getProductListModelAndViewStale();
 		}
 		
@@ -107,11 +109,13 @@ public class ProductController {
 	}
 
 	/*
-	 * Tutorial practice, inconsistent with other methods signatures...
+	 *
 	 */
 	@RequestMapping("/remove_product")
 	public ModelAndView remove(@RequestParam("idRemove") String idRequest) {
-		// necessary?, safe?, good?
+		// TODO prozkoumat
+		// muzu mit @RequestParam("idRemove") int idRequest
+		// redundantni parseInt, ale jak to funguje behind the scenes?
 		Integer id = -1;
 		try {
 			id = Integer.parseInt(idRequest);
@@ -184,6 +188,7 @@ public class ProductController {
 		maw.addObject("intoFormProduct", new Product());
 		return maw;
 	}
+	//TODO jak tohle funguje behind the scenes... (maw.addObject("intoFormProduct", new Product());)
 	private ModelAndView getProductListModelAndViewStale() {
 		ModelAndView maw = getProductListModelAndView();
 		return maw;
