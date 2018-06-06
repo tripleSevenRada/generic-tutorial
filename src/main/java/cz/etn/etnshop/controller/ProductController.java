@@ -172,10 +172,14 @@ public class ProductController {
 		return "fallback";
 	}
 
+	//custom editor: https://howtodoinjava.com/spring/spring-boot/custom-property-editor-example/
+	//externalize words: https://www.mkyong.com/spring/spring-value-import-a-list-from-properties-file/
 	@InitBinder
 	public void initBinder(WebDataBinder dataBinder){
-		StringTrimmerEditor editor = new StringTrimmerEditor(true); // true - trim whitespace only Strings to NULL
+		var editor = new StringTrimmerEditor(true); // true - trim whitespace only Strings to NULL
 		dataBinder.registerCustomEditor(String.class, editor);
+		var dirty = new DirtyWordsEditor();
+		dataBinder.registerCustomEditor(String.class, dirty);
 	}
 
 	private ModelAndView getProductListModelAndView() {
