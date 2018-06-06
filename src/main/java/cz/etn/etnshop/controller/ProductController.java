@@ -116,7 +116,7 @@ public class ProductController {
 		// TODO prozkoumat
 		// muzu mit @RequestParam("idRemove") int idRequest
 		// redundantni parseInt, ale jak to funguje behind the scenes?
-		Integer id = -1;
+		int id = -1;
 		try {
 			id = Integer.parseInt(idRequest);
 		} catch (Exception e) {
@@ -166,10 +166,16 @@ public class ProductController {
 		return modelAndView;
 	}
 
-	// corner case: http://localhost:8080/etnshop/product/list//product/list
+	// edge case: http://localhost:8080/etnshop/product/list//product/list
 	@RequestMapping(value = { "*", "*/*", "/*", "*/" }, method = { RequestMethod.GET, RequestMethod.POST })
 	public String fallbackJSPPage() {
 		return "fallback";
+	}
+
+	@InitBinder
+	public void initBinder(WebDataBinder dataBinder){
+		StringTrimmerEditor editor = new StringTrimmerEditor(true); // true - trim whitespace only Strings to NULL
+		dataBinder.registerCustomEditor(String.class, editor);
 	}
 
 	private ModelAndView getProductListModelAndView() {
@@ -188,7 +194,7 @@ public class ProductController {
 		maw.addObject("intoFormProduct", new Product());
 		return maw;
 	}
-	//TODO jak tohle funguje behind the scenes... (maw.addObject("intoFormProduct", new Product());)
+	//TODO jak tohle funguje behind the scenes...  vs (maw.addObject("intoFormProduct", new Product());)
 	private ModelAndView getProductListModelAndViewStale() {
 		ModelAndView maw = getProductListModelAndView();
 		return maw;

@@ -43,7 +43,7 @@ public class ProductDaoImpl extends AbstractDao implements ProductDao {
 	 * @see cz.etn.etnshop.dao.ProductDao#getProductById(java.lang.Integer)
 	 */
 	@Override
-	public Product getProductById(Integer id) throws HibernateException{
+	public Product getProductById(int id) throws HibernateException{
 		Session session = getHibernateSession();
 		return (Product)session.get(Product.class, id);
 	}
