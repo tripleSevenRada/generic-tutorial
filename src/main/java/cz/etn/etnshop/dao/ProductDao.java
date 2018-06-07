@@ -12,7 +12,7 @@ public interface ProductDao {
 	List<Product> getProducts();
 	
 	@Transactional(readOnly = true)
-	Product getProductById(Integer id);
+	Product getProductById(int id);
 
 	@Transactional
 	void addProduct(Product product);

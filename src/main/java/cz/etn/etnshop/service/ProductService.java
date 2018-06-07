@@ -12,6 +12,6 @@ public interface ProductService {
 	List<Product> getProducts();
 	
 	@Transactional(readOnly = true)
-	Product getProductById(Integer id);
+	Product getProductById(int id);
 
 }

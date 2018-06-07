@@ -9,8 +9,12 @@ import javax.validation.Valid;
 
 import org.hibernate.HibernateException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.propertyeditors.StringTrimmerEditor;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.WebDataBinder;
+import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -19,6 +23,8 @@ import org.springframework.web.servlet.ModelAndView;
 
 import cz.etn.etnshop.controller.utils.RequestParseResult;
 import cz.etn.etnshop.controller.utils.RequestParser;
+import cz.etn.etnshop.custom_editors.CustomEditorsConfig;
+import cz.etn.etnshop.custom_editors.DirtyWordsEditor;
 import cz.etn.etnshop.dao.Product;
 import cz.etn.etnshop.dao.ProductDao;
 import cz.etn.etnshop.service.ProductService;
@@ -172,13 +178,18 @@ public class ProductController {
 		return "fallback";
 	}
 
-	//custom editor: https://howtodoinjava.com/spring/spring-boot/custom-property-editor-example/
-	//externalize words: https://www.mkyong.com/spring/spring-value-import-a-list-from-properties-file/
 	@InitBinder
 	public void initBinder(WebDataBinder dataBinder){
 		var editor = new StringTrimmerEditor(true); // true - trim whitespace only Strings to NULL
 		dataBinder.registerCustomEditor(String.class, editor);
-		var dirty = new DirtyWordsEditor();
+		// read spring config java class
+		AnnotationConfigApplicationContext context = 
+				new AnnotationConfigApplicationContext(CustomEditorsConfig.class);
+		// get the bean from spring container
+		var dirty = context.getBean("dirtyWordsEditor", DirtyWordsEditor.class);
+		context.close();
+		// TODO funguje... znamena to ze, "bean" ma charakter "closure"? 
+		//dirty.testOutputDirtyWords();
 		dataBinder.registerCustomEditor(String.class, dirty);
 	}
 
