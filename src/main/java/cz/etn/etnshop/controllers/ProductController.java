@@ -181,6 +181,9 @@ public class ProductController {
 		// https://github.com/spring-projects/spring-framework/blob/master/spring-beans/src/main/java/org/springframework/beans/propertyeditors/StringTrimmerEditor.java
 		var editor = new StringTrimmerEditor(true); // true - trim whitespace only Strings to NULL
 		dataBinder.registerCustomEditor(String.class, editor);
+		// custom editor impl: https://howtodoinjava.com/spring/spring-boot/custom-property-editor-example/
+		// !
+		// multiple editors bound to one class: https://stackoverflow.com/questions/39853350/spring-initbinder-register-multiple-custom-editor-string-class
 	}
 
 	private ModelAndView getProductListModelAndView() {
