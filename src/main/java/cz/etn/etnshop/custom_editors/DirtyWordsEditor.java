@@ -1,21 +1,21 @@
-package 
- 
-import java.beans.PropertyEditorSupport;
+package cz.etn.etnshop.custom_editors;
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.util.StringUtils;
 
-@PropertySource(value="classpath:dirty_words.properties")
-public class DirtyWordsEditor extends BaseCustomEditor {
+public class DirtyWordsEditor extends BaseCustomEditor implements CustomStringEditor{
 
-    private static final String LOG_TAG = "DirtyWordsEditor: "
+    private static final String LOG_TAG = "DirtyWordsEditor: ";
 
     @Value("#{'${dirty_words}'.split(',')}")
-    private List<Integer> dirtyWords;
-    
+    private List <String> dirtyWords;
+
     @Override
     public void setAsText(String text) throws IllegalArgumentException {
         System.out.println(LOG_TAG + "set : " + text);
         if (StringUtils.hasText(text)) {
-            setValue(text.trim());
+            setValue(edit(text.trim()));
         } else {
             setValue(null);
         }
@@ -23,15 +23,23 @@ public class DirtyWordsEditor extends BaseCustomEditor {
  
     @Override
     public String getAsText() {
-        String value = (String) getValue();
-        System.out.println(LOG_TAG + "get : " + value);
+		Object value = getValue();
+		return (value != null ? value.toString() : "");
+    }
+    
+	@Override
+	public String edit(String text) {
+		// TODO 
+		// FOR EACH singleDirtyWord : dirtyWords
+		//     sunout uvnitr textu substring o delce singleDirtyWord
+		//     IF (edit distance substring >> singleDirtyWord) < delka singleDirtyWord / KONST : replace substring hezkym slovem  
+		return text + "-edit";
+	}
+	
+    public void testPrint() {
+        System.out.println(LOG_TAG + "dirty words test print");
         for(String s: dirtyWords){
             System.out.println(LOG_TAG + "test print dirty: " + s);
-        }
-        if (value != null) {
-            return value;
-        } else {
-            return "";
         }
     }
 }

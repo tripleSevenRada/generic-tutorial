@@ -8,6 +8,7 @@ import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 import java.beans.PropertyEditorSupport;
 
 @Configuration
+@PropertySource(value="classpath:dirty_words.properties")
 public class BaseCustomEditor extends PropertyEditorSupport{
 
 	//To resolve ${} in @Value
@@ -15,5 +16,9 @@ public class BaseCustomEditor extends PropertyEditorSupport{
 	public static PropertySourcesPlaceholderConfigurer propertyConfigInDev() {
 		return new PropertySourcesPlaceholderConfigurer();
 	}
-
+	
+	@Bean
+	public CustomStringEditor dirtyWordsEditor() {
+		return new DirtyWordsEditor();
+	}
 }

@@ -9,7 +9,7 @@ import javax.validation.Valid;
 
 import org.hibernate.HibernateException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.propertyeditors.StringTrimmerEditor;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
@@ -21,6 +21,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 import cz.etn.etnshop.controllers.utils.RequestParseResult;
 import cz.etn.etnshop.controllers.utils.RequestParser;
+import cz.etn.etnshop.custom_editors.BaseCustomEditor;
+import cz.etn.etnshop.custom_editors.DirtyWordsEditor;
 import cz.etn.etnshop.dao.Product;
 import cz.etn.etnshop.dao.ProductDao;
 import cz.etn.etnshop.service.ProductService;
@@ -48,7 +50,7 @@ public class ProductController {
 		return getProductListModelAndViewFresh();
 	}
 
-	//inkonsistentni signatury metod, vim, je to cviceni...
+	//nesourode signatury metod, vim, chci si vyzkouset vic veci...
 	
 	@RequestMapping("/add_product")
 	public ModelAndView add(
@@ -180,8 +182,13 @@ public class ProductController {
 	public void initBinder(WebDataBinder dataBinder){
 		// https://github.com/spring-projects/spring-framework/blob/master/spring-beans/src/main/java/org/springframework/beans/propertyeditors/StringTrimmerEditor.java
 		// var editor = new StringTrimmerEditor(true); // true - trim whitespace only Strings to NULL
-		var dirty = new DirtyWordsEditor();
+
+		// TODO is this too heavy?
+		var context = new AnnotationConfigApplicationContext(BaseCustomEditor.class);
+		var dirty = context.getBean("dirtyWordsEditor", DirtyWordsEditor.class);
 		dataBinder.registerCustomEditor(String.class, dirty);
+		context.close();
+		
 		// custom editor impl: https://howtodoinjava.com/spring/spring-boot/custom-property-editor-example/
 		// !
 		// multiple editors bound to one class: https://stackoverflow.com/questions/39853350/spring-initbinder-register-multiple-custom-editor-string-class
