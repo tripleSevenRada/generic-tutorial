@@ -7,7 +7,7 @@ import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.springframework.stereotype.Repository;
 
-import cz.etn.etnshop.controller.utils.RequestParseResult;
+import cz.etn.etnshop.controllers.utils.RequestParseResult;
 
 //TODO prozkoumat tento mechanismus. Mam pouzivat explicitne throws HibernateExceptions?
 

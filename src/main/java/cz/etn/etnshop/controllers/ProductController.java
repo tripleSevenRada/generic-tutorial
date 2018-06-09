@@ -1,4 +1,4 @@
-package cz.etn.etnshop.controller;
+package cz.etn.etnshop.controllers;
 
 import java.util.List;
 import java.util.OptionalInt;
@@ -10,7 +10,6 @@ import javax.validation.Valid;
 import org.hibernate.HibernateException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.propertyeditors.StringTrimmerEditor;
-import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
@@ -20,11 +19,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
-
-import cz.etn.etnshop.controller.utils.RequestParseResult;
-import cz.etn.etnshop.controller.utils.RequestParser;
-import cz.etn.etnshop.custom_editors.CustomEditorsConfig;
-import cz.etn.etnshop.custom_editors.DirtyWordsEditor;
+import cz.etn.etnshop.controllers.utils.RequestParseResult;
+import cz.etn.etnshop.controllers.utils.RequestParser;
 import cz.etn.etnshop.dao.Product;
 import cz.etn.etnshop.dao.ProductDao;
 import cz.etn.etnshop.service.ProductService;
@@ -61,7 +57,6 @@ public class ProductController {
 			BindingResult theBindingResult
 			) {
 		if(theBindingResult.hasErrors()) {
-			//TODO jak tohle funguje... 
 			return getProductListModelAndViewStale();
 		}
 		
@@ -96,7 +91,7 @@ public class ProductController {
 			he.printStackTrace();
 		}
 		if (p != null) {
-			//TODO get rid of JS validation
+			//TODO get rid of explicit validation
 			if(! productValidator.isValid(p)) {
 				System.err.println(LOG_TAG + "validation error: /edit_product");
 				System.err.println(LOG_TAG + p.toString());
@@ -122,11 +117,14 @@ public class ProductController {
 		// TODO prozkoumat
 		// muzu mit @RequestParam("idRemove") int idRequest
 		// redundantni parseInt, ale jak to funguje behind the scenes?
+		
+		// TODO https://www.udemy.com/spring-hibernate-tutorial/learn/v4/t/lecture/6846298?start=0
+		
 		int id = -1;
 		try {
 			id = Integer.parseInt(idRequest);
 		} catch (Exception e) {
-			e.printStackTrace();
+			System.err.println(LOG_TAG + "failed:>" + idRequest + "<");
 			return getProductListModelAndViewFresh();
 		}
 		System.out.println(LOG_TAG + "remove, id: " + id);
@@ -180,17 +178,9 @@ public class ProductController {
 
 	@InitBinder
 	public void initBinder(WebDataBinder dataBinder){
+		// https://github.com/spring-projects/spring-framework/blob/master/spring-beans/src/main/java/org/springframework/beans/propertyeditors/StringTrimmerEditor.java
 		var editor = new StringTrimmerEditor(true); // true - trim whitespace only Strings to NULL
 		dataBinder.registerCustomEditor(String.class, editor);
-		// read spring config java class
-		AnnotationConfigApplicationContext context = 
-				new AnnotationConfigApplicationContext(CustomEditorsConfig.class);
-		// get the bean from spring container
-		var dirty = context.getBean("dirtyWordsEditor", DirtyWordsEditor.class);
-		context.close();
-		// TODO funguje... znamena to ze, "bean" ma charakter "closure"? 
-		//dirty.testOutputDirtyWords();
-		dataBinder.registerCustomEditor(String.class, dirty);
 	}
 
 	private ModelAndView getProductListModelAndView() {

@@ -1,4 +1,4 @@
-package cz.etn.etnshop.controller.utils;
+package cz.etn.etnshop.controllers.utils;
 
 import javax.servlet.http.HttpServletRequest;
 

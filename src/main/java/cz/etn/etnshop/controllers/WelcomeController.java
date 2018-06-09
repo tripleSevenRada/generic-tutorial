@@ -1,4 +1,4 @@
-package cz.etn.etnshop.controller;
+package cz.etn.etnshop.controllers;
 
 import java.util.Map;
 

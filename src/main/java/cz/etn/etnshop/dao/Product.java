@@ -36,7 +36,7 @@ public class Product implements Serializable, IntSupplier {
 	private int id;
 	@NotNull(message = "Is required")
 	@Size(min = 5, message = "Name length must not be less than 5")
-	private String name = "Placeholder";
+	private String name = null;
 	@Min(value = 1, message = "Serial 1 must not be less than 1")
 	@Max(value = 100, message = "Serial 1 Must not be greater than 100")
 	private int serial1 = 1;

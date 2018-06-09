@@ -4,7 +4,7 @@ import java.util.List;
 
 import org.springframework.transaction.annotation.Transactional;
 
-import cz.etn.etnshop.controller.utils.RequestParseResult;
+import cz.etn.etnshop.controllers.utils.RequestParseResult;
 
 public interface ProductDao {
 

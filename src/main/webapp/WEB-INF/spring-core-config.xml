@@ -15,11 +15,7 @@
 		base-package="cz.etn.etnshop" />
 
 	<context:property-placeholder
-		location="classpath:application.properties" order="1"/>
-	<context:property-placeholder
-		location="classpath:access_test.properties" order="2"/>
-	<context:property-placeholder
-		location="classpath:dirty_words.properties" order="3"/>
+		location="classpath:application.properties" />
 
 	<!-- Transaction settings -->
 	<tx:annotation-driven />
