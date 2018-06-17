@@ -31,7 +31,7 @@ public class DirtyWordsEditor extends BaseCustomEditor implements CustomStringEd
 	public String edit(String text) {
 		// TODO 
 		// FOR EACH singleDirtyWord : dirtyWords
-		//     sunout uvnitr textu substring o delce singleDirtyWord
+		//     sunout uvnitr textu substring o delce singleDirtyWord? Radeji ne, tokenize into words
 		//     IF (edit distance substring >> singleDirtyWord) < delka singleDirtyWord / KONST : replace substring hezkym slovem  
 		return text + "-edit";
 	}
