@@ -33,7 +33,11 @@ public class ProductDaoImpl extends AbstractDao implements ProductDao {
 	@Transactional(readonly=true)
 	@Override
 	public List<Product> getProducts() throws HibernateException {
-		// bez transaction?
+		// No transaction.
+		// Declarative transactions separates transaction management code from the business logic.
+		// Spring supports declarative transactions using transaction advice (using AOP)
+		// via XML configuration in the spring context or with @Transactional annotation.
+		
 		Criteria criteria = getSession().createCriteria(Product.class);
 		return (List<Product>) criteria.list();
 	}
@@ -47,7 +51,7 @@ public class ProductDaoImpl extends AbstractDao implements ProductDao {
 	@Transactional(readonly=true)
 	@Override
 	public Product getProductById(int id) throws HibernateException{
-		// bez transaction?
+		// No transaction.
 		Session session = getHibernateSession();
 		return (Product)session.get(Product.class, id);
 	}
@@ -56,6 +60,7 @@ public class ProductDaoImpl extends AbstractDao implements ProductDao {
 	public void addProduct(Product p) throws HibernateException{
 
 		// TRANSACTION WAY
+		// The transaction management code is tightly bound to the business logic in this case.
 
 		Transaction transaction = null;
 		Session session = null;
@@ -86,6 +91,7 @@ public class ProductDaoImpl extends AbstractDao implements ProductDao {
 	public void updateProduct(Product p, RequestParseResult rpr) throws HibernateException{
 
 		// TRANSACTION WAY
+		// The transaction management code is tightly bound to the business logic in this case.
 
 		Transaction transaction = null;
 		Session session = null;
@@ -114,6 +120,7 @@ public class ProductDaoImpl extends AbstractDao implements ProductDao {
 	public void removeProduct(Product p) throws HibernateException {
 
 		// TRANSACTION WAY
+		// The transaction management code is tightly bound to the business logic in this case.
 
 		Transaction transaction = null;
 		Session session = null;
