@@ -46,7 +46,6 @@ public class ProductDaoImpl extends AbstractDao implements ProductDao {
 	 * (non-Javadoc)
 	 * Returns the persistent instance of the given entity class with the given identifier,
 	 * or null if there is no such persistent instance.
-	 * @see cz.etn.etnshop.dao.ProductDao#getProductById(java.lang.Integer)
 	 */
 	@Transactional(readonly=true)
 	@Override
@@ -71,7 +70,7 @@ public class ProductDaoImpl extends AbstractDao implements ProductDao {
 			if(p != null) {
 				session.persist(p);
 			} else {
-				System.err.println(LOG_TAG + "Product = null - addProduct");
+				System.err.println(LOG_TAG + "Product = null --- addProduct");
 			}
 			transaction.commit();
 		} catch HibernateException he {
@@ -102,7 +101,7 @@ public class ProductDaoImpl extends AbstractDao implements ProductDao {
 				p.setSerial2(rpr.getSerial2());
 				//NO session.update(p)
 			} else {
-				System.err.println(LOG_TAG + "Product = null or RequestParseResult = null - updateProduct");
+				System.err.println(LOG_TAG + "Product = null or RequestParseResult = null --- updateProduct");
 			}
 			transaction.commit();// IMPICIT update
 		} catch HibernateException he {
@@ -148,7 +147,7 @@ public class ProductDaoImpl extends AbstractDao implements ProductDao {
 			if(p != null) {
 				session.delete(p);
 			} else {
-				System.out.println(LOG_TAG + "non-existing product query - removeProduct");
+				System.out.println(LOG_TAG + "non-existing product query --- removeProduct");
 			}
 			transaction.commit();
 		} catch HibernateException he {
