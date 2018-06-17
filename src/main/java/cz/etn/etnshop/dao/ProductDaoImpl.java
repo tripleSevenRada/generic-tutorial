@@ -30,8 +30,10 @@ public class ProductDaoImpl extends AbstractDao implements ProductDao {
 	}
 
 	@SuppressWarnings("unchecked")
+	@Transactional(readonly=true)
 	@Override
 	public List<Product> getProducts() throws HibernateException {
+		// bez transaction?
 		Criteria criteria = getSession().createCriteria(Product.class);
 		return (List<Product>) criteria.list();
 	}
@@ -42,42 +44,93 @@ public class ProductDaoImpl extends AbstractDao implements ProductDao {
 	 * or null if there is no such persistent instance.
 	 * @see cz.etn.etnshop.dao.ProductDao#getProductById(java.lang.Integer)
 	 */
+	@Transactional(readonly=true)
 	@Override
 	public Product getProductById(int id) throws HibernateException{
+		// bez transaction?
 		Session session = getHibernateSession();
 		return (Product)session.get(Product.class, id);
 	}
 
 	@Override
 	public void addProduct(Product p) throws HibernateException{
-		Session session = getHibernateSession();
-		if(p != null) {
-			session.persist(p);
-		} else {
-			System.err.println(LOG_TAG + "Product = null - addProduct");
-		}
-	}
 
+		// TRANSACTION WAY
+
+		Transaction transaction = null;
+		Session session = null;
+
+		try{
+			session = getHibernateSession();
+			transaction = session.beginTransaction();
+			if(p != null) {
+				session.persist(p);
+			} else {
+				System.err.println(LOG_TAG + "Product = null - addProduct");
+			}
+			transaction.commit();
+		} catch HibernateException he {
+			if(transaction != null) transaction.rollback();
+			throw new HibernateException("addProduct()"); // rethrown for consistency
+		}finally{
+			if(session != null) session.close();
+		}
+		
+	}
+	
+	
+	//nekonsistenti signatury metod, vim to, tutorial...
+	
+	
 	@Override
 	public void updateProduct(Product p, RequestParseResult rpr) throws HibernateException{
-		Session session = getHibernateSession();
-		if(p != null && rpr != null) {
-			p.setName(rpr.getName());
-			p.setSerial1(rpr.getSerial1());
-			p.setSerial2(rpr.getSerial2());
-			session.update(p);
-		} else {
-			System.err.println(LOG_TAG + "Product = null or RequestParseResult = null - updateProduct");
+
+		// TRANSACTION WAY
+
+		Transaction transaction = null;
+		Session session = null;
+
+		try{
+			session = getHibernateSession();
+			transaction = session.beginTransaction();
+			if(p != null && rpr != null) {
+				p.setName(rpr.getName());
+				p.setSerial1(rpr.getSerial1());
+				p.setSerial2(rpr.getSerial2());
+				session.update(p);
+			} else {
+				System.err.println(LOG_TAG + "Product = null or RequestParseResult = null - updateProduct");
+			}
+			transaction.commit();
+		} catch HibernateException he {
+			if(transaction != null) transaction.rollback();
+			throw new HibernateException("updateProduct()"); // rethrown for consistency
+		}finally{
+			if(session != null) session.close();
 		}
 	}
 
 	@Override
 	public void removeProduct(Product p) throws HibernateException {
-		Session session = getHibernateSession();
-		if(p != null) {
-			session.delete(p);
-		} else {
-			System.out.println(LOG_TAG + "non-existing product query - removeProduct");
+
+		// TRANSACTION WAY
+
+		Transaction transaction = null;
+		Session session = null;
+
+		try{
+			session = getHibernateSession();
+			if(p != null) {
+				session.delete(p);
+			} else {
+				System.out.println(LOG_TAG + "non-existing product query - removeProduct");
+			}
+			transaction.commit();
+		} catch HibernateException he {
+			if(transaction != null) transaction.rollback();
+			throw new HibernateException("removeProduct()"); // rethrown for consistency
+		}finally{
+			if(session != null) session.close();
 		}
 	}
 
