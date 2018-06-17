@@ -31,5 +31,5 @@
 
 	<!-- Transaction settings -->
 	<tx:annotation-driven />
-
+	
 </beans>

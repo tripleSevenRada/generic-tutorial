@@ -33,7 +33,7 @@ public class DirtyWordsEditor extends BaseCustomEditor implements CustomStringEd
 		// FOR EACH singleDirtyWord : dirtyWords
 		//     sunout uvnitr textu substring o delce singleDirtyWord? Radeji ne, tokenize into words
 		//     IF (edit distance substring >> singleDirtyWord) < delka singleDirtyWord / KONST : replace substring hezkym slovem  
-		return text + "-edit";
+		return text; //+ "-edit";
 	}
 	
     public void testPrint() {
