@@ -84,7 +84,7 @@ public class ProductDaoImpl extends AbstractDao implements ProductDao {
 	}
 	
 	
-	//nekonsistenti signatury metod, vim to, tutorial...
+	//nekonsistentni signatury metod, vim to, tutorial...
 	
 	
 	@Override
@@ -100,9 +100,33 @@ public class ProductDaoImpl extends AbstractDao implements ProductDao {
 				p.setName(rpr.getName());
 				p.setSerial1(rpr.getSerial1());
 				p.setSerial2(rpr.getSerial2());
-				session.update(p);
+				//NO session.update(p)
 			} else {
 				System.err.println(LOG_TAG + "Product = null or RequestParseResult = null - updateProduct");
+			}
+			transaction.commit();// IMPICIT update
+		} catch HibernateException he {
+			if(transaction != null) transaction.rollback();
+			throw new HibernateException("updateProduct()"); // rethrown for consistency
+		}finally{
+			if(session != null) session.close();
+		}
+	}
+	
+	@Override
+	public void updateProduct(int id, RequestParseResult rpr) throws HibernateException{
+
+		Transaction transaction = null;
+		Session session = null;
+
+		try{
+			session = getHibernateSession();
+			transaction = session.beginTransaction();
+			Product p = session.get(Product.class,id);
+			if(p != null && rpr != null){
+				p.setName(rpr.getName());
+				p.setSerial1(rpr.getSerial1);
+				p.setSerial2(rpr.getSerial2);
 			}
 			transaction.commit();
 		} catch HibernateException he {

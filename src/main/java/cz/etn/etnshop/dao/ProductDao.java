@@ -14,12 +14,11 @@ public interface ProductDao {
 	@Transactional(readOnly = true)
 	Product getProductById(int id);
 
-	@Transactional
 	void addProduct(Product product);
 	
-	@Transactional
 	void updateProduct(Product product, RequestParseResult rpr);
 	
-	@Transactional
+	void updateProduct(int id, RequestParseResult rpr);
+	
 	void removeProduct(Product product);
 }
