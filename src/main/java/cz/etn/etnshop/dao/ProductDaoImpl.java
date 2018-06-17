@@ -90,9 +90,6 @@ public class ProductDaoImpl extends AbstractDao implements ProductDao {
 	@Override
 	public void updateProduct(Product p, RequestParseResult rpr) throws HibernateException{
 
-		// TRANSACTION WAY
-		// The transaction management code is tightly bound to the business logic in this case.
-
 		Transaction transaction = null;
 		Session session = null;
 
@@ -118,9 +115,6 @@ public class ProductDaoImpl extends AbstractDao implements ProductDao {
 
 	@Override
 	public void removeProduct(Product p) throws HibernateException {
-
-		// TRANSACTION WAY
-		// The transaction management code is tightly bound to the business logic in this case.
 
 		Transaction transaction = null;
 		Session session = null;
