@@ -32,7 +32,6 @@ public class ProductDaoImpl extends AbstractDao implements ProductDao {
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<Product> getProducts() throws HibernateException {
-		// No transaction.
 		// Declarative transactions separates transaction management code from the business logic.
 		// Spring supports declarative transactions using transaction advice (using AOP)
 		// via XML configuration in the spring context or with @Transactional annotation.
@@ -42,13 +41,11 @@ public class ProductDaoImpl extends AbstractDao implements ProductDao {
 	}
 
 	/*
-	 * (non-Javadoc)
 	 * Returns the persistent instance of the given entity class with the given identifier,
 	 * or null if there is no such persistent instance.
 	 */
 	@Override
 	public Product getProductById(int id) throws HibernateException{
-		// No transaction.
 		Session session = getHibernateSession();
 		return (Product)session.get(Product.class, id);
 	}
