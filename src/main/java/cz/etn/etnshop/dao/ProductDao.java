@@ -18,10 +18,10 @@ public interface ProductDao {
 	void addProduct(Product product);
 	
 	@Transactional
-	void updateProduct(Product product, RequestParseResult rpr);
+	void updateProduct(Product product, RequestParseResult rpr) throws Exception;
 	
 	@Transactional
-	void updateProduct(int id, RequestParseResult rpr);
+	void updateProduct(int id, RequestParseResult rpr) throws Exception;
 	
 	@Transactional
 	void removeProduct(Product product);

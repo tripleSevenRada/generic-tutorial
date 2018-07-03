@@ -42,6 +42,7 @@ public class ProductController {
 	private ProductService productService;
 	@Autowired
 	private ProductDao productDao;
+	@SuppressWarnings("unused")
 	@Autowired
 	private ProductValidator productValidator;
 
@@ -93,18 +94,20 @@ public class ProductController {
 			he.printStackTrace();
 		}
 		if (p != null) {
-			//TODO get rid of explicit validation
-			if(! productValidator.isValid(p)) {
-				System.err.println(LOG_TAG + "validation error: /edit_product");
-				System.err.println(LOG_TAG + p.toString());
-				return getProductListModelAndViewFresh();
-			}
+
 			try {
 				productDao.updateProduct(p, rpr);
 			} catch (HibernateException he) {
-				// TODO
+				System.err.println("CATCH V ProductController he");
 				he.printStackTrace();
+				return getProductListModelAndViewFresh();
+			} catch (Exception e) {
+				// samozrejme nesmysl catch neni validace
+				System.err.println("CATCH V ProductController e");
+				e.printStackTrace();
+				return getProductListModelAndViewFresh();
 			}
+			
 		} else {
 			System.err.println(LOG_TAG + "/edit_product: query retrieved null");
 		}

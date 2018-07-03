@@ -28,7 +28,7 @@ public class ProductDaoImpl extends AbstractDao implements ProductDao {
 		if(session == null) throw new HibernateException("session = null");//?
 		return session;
 	}
-
+	
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<Product> getProducts() throws HibernateException {
@@ -65,12 +65,14 @@ public class ProductDaoImpl extends AbstractDao implements ProductDao {
 	
 	
 	@Override
-	public void updateProduct(Product p, RequestParseResult rpr) throws HibernateException{
+	// nesmysl, pokud mam @ "constraints" v product, necham si to tady jako referenci
+	public void updateProduct(Product p, RequestParseResult rpr) throws Exception{
 	Session session = getHibernateSession();
 		if(p != null && rpr != null) {
 			p.setName(rpr.getName());
 			p.setSerial1(rpr.getSerial1());
 			p.setSerial2(rpr.getSerial2());
+			//tady to muze selhat, neni mechanismus validace
 			session.update(p);
 		} else {
 			System.err.println(LOG_TAG + "Product = null or RequestParseResult = null --- updateProduct");
@@ -78,13 +80,15 @@ public class ProductDaoImpl extends AbstractDao implements ProductDao {
 	}
 	
 	@Override
-	public void updateProduct(int id, RequestParseResult rpr) throws HibernateException{
+	// nesmysl, pokud mam @ "constraints" v product, necham si to tady jako referenci
+	public void updateProduct(int id, RequestParseResult rpr) throws Exception{
 		Session session = getHibernateSession();
 		Product p = (Product) session.get(Product.class,id);
 		if(p != null && rpr != null){
 			p.setName(rpr.getName());
 			p.setSerial1(rpr.getSerial1());
 			p.setSerial2(rpr.getSerial2());
+			// tady to muze selhat, neni mechanismus validace
 			session.update(p);
 		}
 	}
