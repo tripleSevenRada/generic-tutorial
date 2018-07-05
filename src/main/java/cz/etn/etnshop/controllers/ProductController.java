@@ -47,6 +47,9 @@ public class ProductController {
 		return getProductListModelAndView();
 	}
 	
+	// vim o tom, ze jsem preskocil service layer v tomto tutorialovem priklade a mam
+	// service pouze pro "serving"
+	
 	@RequestMapping(value = "/add_product", method = RequestMethod.POST)
 	public ModelAndView add(
 			@Valid
@@ -61,6 +64,12 @@ public class ProductController {
 		return getProductListModelAndView();
 	}
 
+	@RequestMapping("/delete_product")
+	public ModelAndView delete(@RequestParam("productId") int id) {
+		productDao.deleteProduct(id);
+		return getProductListModelAndView();
+	}
+	
 	@RequestMapping("/add_form")
 	public ModelAndView addForm() {
 		ModelAndView modelAndView = new ModelAndView("product/add-product");
@@ -75,12 +84,6 @@ public class ProductController {
 		return modelAndView;
 	}
 	
-	@RequestMapping("/delete_product")
-	public ModelAndView delete(@RequestParam("productId") int id) {
-		productDao.deleteProduct(id);
-		return getProductListModelAndView();
-	}
-		
 	@RequestMapping("/stats")
 	public ModelAndView stats() {
 		ModelAndView modelAndView = new ModelAndView("product/stats");
