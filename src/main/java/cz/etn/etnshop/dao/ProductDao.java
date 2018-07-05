@@ -4,8 +4,6 @@ import java.util.List;
 
 import org.springframework.transaction.annotation.Transactional;
 
-import cz.etn.etnshop.controllers.utils.RequestParseResult;
-
 public interface ProductDao {
 
 	@Transactional(readOnly = true)
@@ -18,11 +16,6 @@ public interface ProductDao {
 	void addProduct(Product product);
 	
 	@Transactional
-	void updateProduct(Product product, RequestParseResult rpr) throws Exception;
+	void deleteProduct(int productId);
 	
-	@Transactional
-	void updateProduct(int id, RequestParseResult rpr) throws Exception;
-	
-	@Transactional
-	void removeProduct(Product product);
 }

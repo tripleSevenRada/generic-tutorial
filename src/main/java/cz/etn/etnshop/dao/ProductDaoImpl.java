@@ -2,12 +2,12 @@ package cz.etn.etnshop.dao;
 
 import java.util.List;
 
+
 import org.hibernate.Criteria;
-import org.hibernate.HibernateException;
+import org.hibernate.Query;
 import org.hibernate.Session;
 import org.springframework.stereotype.Repository;
-
-import cz.etn.etnshop.controllers.utils.RequestParseResult;
+import org.springframework.transaction.annotation.Transactional;
 
 //TODO prozkoumat tento mechanismus. Mam pouzivat explicitne throws HibernateExceptions?
 
@@ -15,7 +15,7 @@ import cz.etn.etnshop.controllers.utils.RequestParseResult;
 //One advantage of using this annotation is that it has
 //automatic persistence exception translation enabled. When using a persistence framework
 //such as Hibernate, native exceptions thrown within classes annotated with
-//@Repository will be automatically translated into subclasses of Spring’s DataAccessExeption.
+//@Repository will be automatically translated into subclasses of Spring’s DataAccessExeption./unchecked/
 
 @Repository("productDao")
 public class ProductDaoImpl extends AbstractDao implements ProductDao {
@@ -23,15 +23,16 @@ public class ProductDaoImpl extends AbstractDao implements ProductDao {
 	public static final String LOG_TAG = "--------------------- ProductDaoImpl: ";
 	//https://docs.jboss.org/hibernate/core/3.2/api/org/hibernate/Session.html
 
-	private Session getHibernateSession() throws HibernateException {
+	private Session getHibernateSession(){
 		Session session = getSession();
-		if(session == null) throw new HibernateException("session = null");//?
 		return session;
 	}
 	
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<Product> getProducts() throws HibernateException {
+	@Transactional
+	public List<Product> getProducts(){
+		
 		// Declarative transactions separates transaction management code from the business logic.
 		// Spring supports declarative transactions using transaction advice (using AOP)
 		// via XML configuration in the spring context or with @Transactional annotation.
@@ -45,61 +46,30 @@ public class ProductDaoImpl extends AbstractDao implements ProductDao {
 	 * or null if there is no such persistent instance.
 	 */
 	@Override
-	public Product getProductById(int id) throws HibernateException{
+	@Transactional
+	public Product getProductById(int productId){
 		Session session = getHibernateSession();
-		return (Product)session.get(Product.class, id);
+		return (Product)session.get(Product.class, productId);
 	}
 
 	@Override
-	public void addProduct(Product p) throws HibernateException{
+	@Transactional
+	public void addProduct(Product product){
 		Session session = getHibernateSession();
-		if(p != null) {
-			session.persist(p);
+		if(product != null) {
+			session.saveOrUpdate(product);
 		} else {
 			System.err.println(LOG_TAG + "Product = null --- addProduct");
 		}
 	}
-	
-	
-	//nekonsistentni signatury metod, vim to, tutorial...
-	
-	
-	@Override
-	// nesmysl, pokud mam @ "constraints" v product, necham si to tady jako referenci
-	public void updateProduct(Product p, RequestParseResult rpr) throws Exception{
-	Session session = getHibernateSession();
-		if(p != null && rpr != null) {
-			p.setName(rpr.getName());
-			p.setSerial1(rpr.getSerial1());
-			p.setSerial2(rpr.getSerial2());
-			//tady to muze selhat, neni mechanismus validace
-			session.update(p);
-		} else {
-			System.err.println(LOG_TAG + "Product = null or RequestParseResult = null --- updateProduct");
-		}
-	}
-	
-	@Override
-	// nesmysl, pokud mam @ "constraints" v product, necham si to tady jako referenci
-	public void updateProduct(int id, RequestParseResult rpr) throws Exception{
-		Session session = getHibernateSession();
-		Product p = (Product) session.get(Product.class,id);
-		if(p != null && rpr != null){
-			p.setName(rpr.getName());
-			p.setSerial1(rpr.getSerial1());
-			p.setSerial2(rpr.getSerial2());
-			// tady to muze selhat, neni mechanismus validace
-			session.update(p);
-		}
-	}
 
 	@Override
-	public void removeProduct(Product p) throws HibernateException {
+	@Transactional
+	public void deleteProduct(int productId) {
 		Session session = getHibernateSession();
-		if(p != null) {
-			session.delete(p);
-		} else {
-			System.out.println(LOG_TAG + "non-existing product query --- removeProduct");
-		}
+		Query query = session.createQuery("delete from Product where id=:productId");
+		query.setParameter("productId", productId);
+		query.executeUpdate();
 	}
+	
 }

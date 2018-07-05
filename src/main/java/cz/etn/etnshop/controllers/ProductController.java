@@ -4,10 +4,8 @@ import java.util.List;
 import java.util.OptionalInt;
 import java.util.function.IntSupplier;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
-import org.hibernate.HibernateException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.stereotype.Controller;
@@ -19,8 +17,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
-import cz.etn.etnshop.controllers.utils.RequestParseResult;
-import cz.etn.etnshop.controllers.utils.RequestParser;
 import cz.etn.etnshop.custom_editors.BaseCustomEditor;
 import cz.etn.etnshop.custom_editors.DirtyWordsEditor;
 import cz.etn.etnshop.dao.Product;
@@ -48,110 +44,48 @@ public class ProductController {
 
 	@RequestMapping("/list")
 	public ModelAndView list() {
-		return getProductListModelAndViewFresh();
+		return getProductListModelAndView();
 	}
-
-	//nesourode signatury metod, vim, chci si vyzkouset vic veci...
 	
-	@RequestMapping("/add_product")
+	@RequestMapping(value = "/add_product", method = RequestMethod.POST)
 	public ModelAndView add(
 			@Valid
 			@ModelAttribute ("intoFormProduct") Product outOfFormProduct,
 			BindingResult theBindingResult
 			) {
 		if(theBindingResult.hasErrors()) {
-			return getProductListModelAndViewStale();
+			ModelAndView modelAndView = new ModelAndView("product/add-product");
+			return modelAndView;
 		}
-		
-		try {
-			productDao.addProduct(outOfFormProduct);
-		} catch (HibernateException he) {
-			// TODO
-			he.printStackTrace();
-		}
-		return getProductListModelAndViewFresh();
+		productDao.addProduct(outOfFormProduct);
+		return getProductListModelAndView();
 	}
 
-	@RequestMapping("/edit_product")
-	public ModelAndView edit(HttpServletRequest request) {
-		RequestParseResult rpr = null;
-		try {
-			rpr = RequestParser.parseRequest(request);
-		} catch (Exception e) {
-			e.printStackTrace();
-			return getProductListModelAndViewFresh();
-		}
-		if (rpr.getId() == null || rpr.getName() == null || rpr.getSerial1() == -1 || rpr.getSerial2() == -1) {
-			System.err.println(LOG_TAG + "parse error2: " + rpr.toString());
-			return getProductListModelAndViewFresh();
-		}
-
-		Product p = null;
-		try {
-			p = productDao.getProductById(rpr.getId());
-		} catch (HibernateException he) {
-			// TODO
-			he.printStackTrace();
-		}
-		if (p != null) {
-
-			try {
-				productDao.updateProduct(p, rpr);
-			} catch (HibernateException he) {
-				System.err.println("CATCH V ProductController he");
-				he.printStackTrace();
-				return getProductListModelAndViewFresh();
-			} catch (Exception e) {
-				// samozrejme nesmysl catch neni validace
-				System.err.println("CATCH V ProductController e");
-				e.printStackTrace();
-				return getProductListModelAndViewFresh();
-			}
-			
-		} else {
-			System.err.println(LOG_TAG + "/edit_product: query retrieved null");
-		}
-		return getProductListModelAndViewFresh();
+	@RequestMapping("/add_form")
+	public ModelAndView addForm() {
+		ModelAndView modelAndView = new ModelAndView("product/add-product");
+		modelAndView.addObject("intoFormProduct", new Product());
+		return modelAndView;
 	}
-
-	/*
-	 *
-	 */
-	@RequestMapping("/remove_product")
-	public ModelAndView remove(@RequestParam("idRemove") String idRequest) {
-		// TODO prozkoumat
-		// muzu mit @RequestParam("idRemove") int idRequest
-		// redundantni parseInt, ale jak to funguje behind the scenes?
-		
-		// TODO https://www.udemy.com/spring-hibernate-tutorial/learn/v4/t/lecture/6846298?start=0
-		
-		int id = -1;
-		try {
-			id = Integer.parseInt(idRequest);
-		} catch (Exception e) {
-			System.err.println(LOG_TAG + "failed:>" + idRequest + "<");
-			return getProductListModelAndViewFresh();
-		}
-		System.out.println(LOG_TAG + "remove, id: " + id);
-		try {
-			productDao.removeProduct(productDao.getProductById(id));
-		} catch (HibernateException he) {
-			// TODO
-			he.printStackTrace();
-		}
-		return getProductListModelAndViewFresh();
+	
+	@RequestMapping("/update_form")
+	public ModelAndView update(@RequestParam("productId") int id) {
+		ModelAndView modelAndView = new ModelAndView("product/add-product");
+		modelAndView.addObject("intoFormProduct", productService.getProductById(id));
+		return modelAndView;
 	}
-
+	
+	@RequestMapping("/delete_product")
+	public ModelAndView delete(@RequestParam("productId") int id) {
+		productDao.deleteProduct(id);
+		return getProductListModelAndView();
+	}
+		
 	@RequestMapping("/stats")
 	public ModelAndView stats() {
 		ModelAndView modelAndView = new ModelAndView("product/stats");
 		List<Product> products = null;
-		try {
-			products = productService.getProducts();
-		} catch (HibernateException he) {
-			// TODO
-			he.printStackTrace();
-		}
+		products = productService.getProducts();
 		modelAndView.addObject("products_stats_size", products.size());
 
 		OptionalInt maxNameLength = products.stream().mapToInt(IntSupplier::getAsInt).max();
@@ -170,8 +104,7 @@ public class ProductController {
 			System.err.println(LOG_TAG + "minDescriptionLength NOT PRESENT");
 			modelAndView.addObject("products_stats_name_min_length", 0);
 		}
-		//
-
+		
 		return modelAndView;
 	}
 
@@ -183,6 +116,7 @@ public class ProductController {
 
 	@InitBinder
 	public void initBinder(WebDataBinder dataBinder){
+		
 		// https://github.com/spring-projects/spring-framework/blob/master/spring-beans/src/main/java/org/springframework/beans/propertyeditors/StringTrimmerEditor.java
 		// var editor = new StringTrimmerEditor(true); // true - trim whitespace only Strings to NULL
 
@@ -193,30 +127,12 @@ public class ProductController {
 		context.close();
 		
 		// custom editor impl: https://howtodoinjava.com/spring/spring-boot/custom-property-editor-example/
-		// !
 		// multiple editors bound to one class: https://stackoverflow.com/questions/39853350/spring-initbinder-register-multiple-custom-editor-string-class
 	}
 
 	private ModelAndView getProductListModelAndView() {
 		ModelAndView modelAndViewProductList = new ModelAndView("product/list");
-		try {
-			modelAndViewProductList.addObject("products", productService.getProducts());
-		} catch (HibernateException he) {
-			// TODO
-			he.printStackTrace();
-		}
+		modelAndViewProductList.addObject("products", productService.getProducts());
 		return modelAndViewProductList;
 	}
-	
-	private ModelAndView getProductListModelAndViewFresh() {
-		ModelAndView maw = getProductListModelAndView();
-		maw.addObject("intoFormProduct", new Product());
-		return maw;
-	}
-	//TODO jak tohle funguje behind the scenes...  vs (maw.addObject("intoFormProduct", new Product());)
-	private ModelAndView getProductListModelAndViewStale() {
-		ModelAndView maw = getProductListModelAndView();
-		return maw;
-	}
-
 }
