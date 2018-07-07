@@ -20,7 +20,6 @@ import org.springframework.web.servlet.ModelAndView;
 import cz.etn.etnshop.custom_editors.BaseCustomEditor;
 import cz.etn.etnshop.custom_editors.DirtyWordsEditor;
 import cz.etn.etnshop.dao.Product;
-import cz.etn.etnshop.dao.ProductDao;
 import cz.etn.etnshop.service.ProductService;
 import cz.etn.etnshop.validators.ProductValidator;
 
@@ -36,8 +35,7 @@ public class ProductController {
 	
 	@Autowired
 	private ProductService productService;
-	@Autowired
-	private ProductDao productDao;
+
 	@SuppressWarnings("unused")
 	@Autowired
 	private ProductValidator productValidator;
@@ -46,9 +44,6 @@ public class ProductController {
 	public ModelAndView list() {
 		return getProductListModelAndView();
 	}
-	
-	// vim o tom, ze jsem preskocil service layer v tomto tutorialovem priklade a mam
-	// service pouze pro "serving"
 	
 	@RequestMapping(value = "/add_product", method = RequestMethod.POST)
 	public ModelAndView add(
@@ -60,13 +55,13 @@ public class ProductController {
 			ModelAndView modelAndView = new ModelAndView("product/add-product");
 			return modelAndView;
 		}
-		productDao.addProduct(outOfFormProduct);
+		productService.addProduct(outOfFormProduct);
 		return getProductListModelAndView();
 	}
 
 	@RequestMapping("/delete_product")
 	public ModelAndView delete(@RequestParam("productId") int id) {
-		productDao.deleteProduct(id);
+		productService.deleteProduct(id);
 		return getProductListModelAndView();
 	}
 	

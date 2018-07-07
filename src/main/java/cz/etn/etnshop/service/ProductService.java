@@ -13,5 +13,11 @@ public interface ProductService {
 	
 	@Transactional(readOnly = true)
 	Product getProductById(int id);
+	
+	@Transactional
+	void addProduct(Product product);
+	
+	@Transactional
+	void deleteProduct(int productId);
 
 }

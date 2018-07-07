@@ -22,14 +22,13 @@ public class ProductServiceImpl implements ProductService {
 	//And if you're thinking of making your application bigger, this is probably the best solution.
 	
 	
-	// vim o tom, ze jsem preskocil service layer v tomto tutorialovem priklade a mam service pouze pro "serving"
-	
 	@Autowired
 	private ProductDao productDao;
 
 	@Override
 	@Transactional
 	public List<Product> getProducts() {
+		// runs in transactional context
 		return productDao.getProducts();
 	}
 
@@ -37,6 +36,18 @@ public class ProductServiceImpl implements ProductService {
 	@Transactional
 	public Product getProductById(int id) {
 		return productDao.getProductById(id);
+	}
+
+	@Override
+	@Transactional
+	public void addProduct(Product product) {
+		productDao.addProduct(product);
+	}
+
+	@Override
+	@Transactional
+	public void deleteProduct(int productId) {
+		productDao.deleteProduct(productId);
 	}
 
 }

@@ -7,7 +7,6 @@ import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
 
 //TODO prozkoumat tento mechanismus. Mam pouzivat explicitne throws HibernateExceptions?
 
@@ -30,7 +29,6 @@ public class ProductDaoImpl extends AbstractDao implements ProductDao {
 	
 	@SuppressWarnings("unchecked")
 	@Override
-	@Transactional
 	public List<Product> getProducts(){
 		
 		// Declarative transactions separates transaction management code from the business logic.
@@ -46,14 +44,12 @@ public class ProductDaoImpl extends AbstractDao implements ProductDao {
 	 * or null if there is no such persistent instance.
 	 */
 	@Override
-	@Transactional
 	public Product getProductById(int productId){
 		Session session = getHibernateSession();
 		return (Product)session.get(Product.class, productId);
 	}
 
 	@Override
-	@Transactional
 	public void addProduct(Product product){
 		Session session = getHibernateSession();
 		if(product != null) {
@@ -64,7 +60,6 @@ public class ProductDaoImpl extends AbstractDao implements ProductDao {
 	}
 
 	@Override
-	@Transactional
 	public void deleteProduct(int productId) {
 		Session session = getHibernateSession();
 		Query query = session.createQuery("delete from Product where id=:productId");
